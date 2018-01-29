@@ -10,8 +10,8 @@ Check [Command Web Page](https://github.com/IMATTUS/websocket_listener/blob/mast
 #
 You'll need libwebsockets and pthreads library
 #
-For working with json I used:
+To work with json I used:
 https://github.com/DaveGamble/cJSON
 
-For working with websockets I used this code:
+To work with websockets I used this code:
 https://gist.github.com/martinsik/3654228
