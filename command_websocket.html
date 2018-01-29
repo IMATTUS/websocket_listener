@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script type="text/javascript">
+
+
+            $(function() {
+                window.WebSocket = window.WebSocket || window.MozWebSocket;
+
+                var websocket ;
+                
+                function sendWGet(msg){
+
+                    websocket = new WebSocket('ws://localhost:9000','param_get_obj');
+                    websocket.onmessage = function (message) {
+                        console.log(message.data);
+                        $('div').empty();
+                        $('div').append($('<p>', { text: message.data }));
+                        websocket.close();
+                    };
+                    websocket.onopen = function (event) {
+                        $('div').empty();
+                        console.log("OPEN: ");
+                        websocket.send(msg); 
+                    };
+                }
+
+                function sendWGetALL(msg){
+
+                    websocket = new WebSocket('ws://localhost:9000','param_get_all');
+                    websocket.onmessage = function (message) {
+                        console.log(message.data);
+                        $('div').empty();
+                        $('div').append($('<p>', { text: message.data }));
+                        websocket.close();
+                    };
+                    websocket.onopen = function (event) {
+                        $('div').empty();
+                        console.log("OPEN: ");
+                        websocket.send(msg); 
+                    };
+                    
+                }
+
+
+                function sendSetSettings(msg){
+
+                    websocket = new WebSocket('ws://localhost:9000','param_set');
+                    websocket.onmessage = function (message) {
+                        console.log(message.data);
+                        $('div').empty();
+                        $('div').append($('<p>', { text: message.data }));
+                        websocket.close();
+                    };
+                    websocket.onopen = function (event) {
+                        $('div').empty();
+                        console.log("OPEN: " + msg);
+                        websocket.send(msg); 
+                    };
+                }
+
+                $('#SetSettings').click(function(e) {
+                    
+
+                    e.preventDefault();
+                    console.log("Begin: ");
+
+                    sendSetSettings("[{  \"command_1\": \"10.185.5.131\" , \"command_2\": \"10.185.99.131\" , \"command_3\": \"4\" }] ");
+
+                });
+
+
+
+                $('#GetSettings').click(function(e) {
+                    
+                    e.preventDefault();
+                    console.log("Enviando: "+$("#cmd").val());
+                    sendWGetALL(" ");
+
+                    $('#cmd').val('');
+                });
+
+                $('#GetOne').click(function(e) {
+                    
+                    e.preventDefault();
+                    sendWGet("[{  \"command_2\": \"\", \"command_3\": \"\" }] ");
+                    console.log("Enviando: " + "[{  \"command_2\": \"\", \"command_3\": \"\" }] ");
+                });
+
+
+
+                enviaTxt = function(e) {
+                    var keynum;
+
+                    if(window.event) { // IE                    
+                      keynum = e.keyCode;
+                    } else if(e.which){ // Netscape/Firefox/Opera                   
+                      keynum = e.which;
+                    }
+                    console.log($('input').val());
+                    console.log($('input').val()+String.fromCharCode(keynum));
+                    websocket.send($('input').val()+String.fromCharCode(keynum));
+                }
+
+                function sendMessage(msg){
+                    waitForSocketConnection(websocket, function(){
+                        console.log("message sent!!! " + msg);
+                        websocket.send(msg);
+
+                    });
+                }
+
+                // Make the function wait until the connection is made...
+                function waitForSocketConnection(socket, callback){
+                    setTimeout(
+                        function () {
+                            if (socket.readyState === 1) {
+                                console.log("Connection is made")
+                                if(callback != null){
+                                    callback();
+                                }
+                                return;
+
+                            } else {
+                                console.log("wait for connection...")
+                                waitForSocketConnection(socket, callback);
+                            }
+
+                        }, 5); // wait 5 milisecond for the connection...
+                }
+                    
+            });
+
+
+        </script>
+        </head>
+    <body>
+        <h1>WebSockets test</h1>
+        <form>
+            
+            <button id="GetSettings">Get ALL</button>
+            <button id="GetOne">Get</button>
+            <button id="SetSettings">Set Command</button>
+            
+
+        </form>
+        <div></div>
+    </body>
+</html>
