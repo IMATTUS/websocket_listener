@@ -1,4 +1,5 @@
-/Debug/
-/output/
+Debug/
+output/
 .cproject
 .project
+.settings
